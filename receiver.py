@@ -10,7 +10,7 @@ CHUNK = 4096
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((sys.argv[1], int(sys.argv[2])))
 audio = pyaudio.PyAudio()
-stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, output=True, input_device_index = 2,frames_per_buffer=CHUNK)
+stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, output=True,frames_per_buffer=CHUNK)
 
 try:
     while True:
