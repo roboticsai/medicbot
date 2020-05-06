@@ -10,8 +10,8 @@ ros::NodeHandle nh;
 
 bool set_; 
 
-geometry_msgs::Pose sum_msg;
-ros::Publisher p("pose", &sum_msg);
+geometry_msgs::Pose joy_data;
+ros::Publisher p("pose", &joy_data);
 
 void setup()
 { 
@@ -21,11 +21,14 @@ void setup()
 
 void loop()
 {  
-  sum_msg.position.x = 1;
-  sum_msg.position.y = 2;
-  sum_msg.position.z = 3;
+  int xAxis = analogRead(A0);
+  int yAxis = analogRead(A1);
   
-  p.publish(&sum_msg);
+  joy_data.position.x = xAxis;
+  joy_data.position.y = yAxis;
+  joy_data.position.z = 0;
+  
+  p.publish(&joy_data);
   nh.spinOnce();
   delay(10);
 }
