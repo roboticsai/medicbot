@@ -41,6 +41,7 @@
 #define RRBOT_CONTROL__RRBOT_HW_INTERFACE_H
 
 #include <ros_control_boilerplate/generic_hw_interface.h>
+#include "geometry_msgs/Twist.h"
 
 namespace rrbot_control
 {
@@ -64,6 +65,9 @@ public:
   /** \breif Enforce limits for all values before writing */
   virtual void enforceLimits(ros::Duration &period);
 
+  ros::NodeHandle n;
+  ros::Publisher pub;
+  geometry_msgs::Twist twist;
 };  // class
 
 }  // namespace

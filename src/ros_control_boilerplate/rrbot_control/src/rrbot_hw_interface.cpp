@@ -46,6 +46,7 @@ RRBotHWInterface::RRBotHWInterface(ros::NodeHandle &nh, urdf::Model *urdf_model)
   : ros_control_boilerplate::GenericHWInterface(nh, urdf_model)
 {
   ROS_INFO_NAMED("rrbot_hw_interface", "RRBotHWInterface Ready.");
+  pub  = n.advertise<geometry_msgs::Twist>("/twist", 1000);
 }
 
 void RRBotHWInterface::read(ros::Duration &elapsed_time)
@@ -77,11 +78,13 @@ void RRBotHWInterface::write(ros::Duration &elapsed_time)
   // sim_hw_interface.cpp IN THIS PACKAGE
   //
   // DUMMY PASS-THROUGH CODE
-  for (std::size_t joint_id = 0; joint_id < num_joints_; ++joint_id) {
-    joint_position_[joint_id] += joint_position_command_[joint_id];
+  for (std::size_t joint_id = 0; joint_id < num_joints_; ++joint_id) { 
+    joint_velocity_[joint_id] += joint_velocity_command_[joint_id];
+    twist.linear.y = joint_velocity_command_[joint_id]; 
   }
-  if(joint_velocity_command_[0]!=0 || joint_velocity_command_[1]!=0)
-    std::cout<<"joint_velocityt_command"<<"\t"<<joint_velocity_command_[0]<<"\t"<<joint_velocity_command_[1]<<std::endl;
+  pub.publish(twist);
+  if(joint_velocity_command_[0] != 0 || joint_velocity_command_[1] != 0)
+    std::cout<<joint_velocity_command_[0]<<"\t"<<joint_velocity_command_[1]<<std::endl;
   // END DUMMY CODE
   //
   // ----------------------------------------------------
