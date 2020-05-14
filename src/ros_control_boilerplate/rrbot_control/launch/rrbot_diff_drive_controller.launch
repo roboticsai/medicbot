@@ -23,8 +23,9 @@
 	  output="screen" args="spawn joint_state_controller mobile_base_controller" />
 
     <!-- Convert joint states to /tf tranforms -->
-    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
-
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
+        <remap from="/joint_states" to="/rrbot/joint_states" />
+    </node>
   </group>
 
 </launch>

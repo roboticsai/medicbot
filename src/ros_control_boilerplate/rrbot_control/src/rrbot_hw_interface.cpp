@@ -82,8 +82,8 @@ void RRBotHWInterface::write(ros::Duration &elapsed_time)
     joint_velocity_[joint_id] += joint_velocity_command_[joint_id];
   }
 
-  twist.linear.x = joint_velocity_command_[0]*100; 
-  twist.linear.y = joint_velocity_command_[1]*100;
+  twist.linear.x = joint_velocity_command_[0]*1000; 
+  twist.linear.y = joint_velocity_command_[1]*1000;
 
   pub.publish(twist);
   if(joint_velocity_command_[0] != 0 || joint_velocity_command_[1] != 0)
