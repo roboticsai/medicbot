@@ -80,11 +80,14 @@ void RRBotHWInterface::write(ros::Duration &elapsed_time)
   // DUMMY PASS-THROUGH CODE
   for (std::size_t joint_id = 0; joint_id < num_joints_; ++joint_id) { 
     joint_velocity_[joint_id] += joint_velocity_command_[joint_id];
-    twist.linear.y = joint_velocity_command_[joint_id]; 
   }
+
+  twist.linear.x = joint_velocity_command_[0]*100; 
+  twist.linear.y = joint_velocity_command_[1]*100;
+
   pub.publish(twist);
   if(joint_velocity_command_[0] != 0 || joint_velocity_command_[1] != 0)
-    std::cout<<joint_velocity_command_[0]<<"\t"<<joint_velocity_command_[1]<<std::endl;
+    std::cout<<twist.linear.x<<"\t"<<twist.linear.y<<std::endl;
   // END DUMMY CODE
   //
   // ----------------------------------------------------
