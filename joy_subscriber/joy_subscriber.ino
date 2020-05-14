@@ -21,7 +21,6 @@ void messageCb(const geometry_msgs::Twist& msg){
     // Set Motor B backward
     digitalWrite(in3, HIGH);
     digitalWrite(in4, LOW);
-    // Convert the declining Y-axis readings for going backward from 470 to 0 into 0 to 255 value for the PWM signal for increasing the motor speed
     motorSpeedA = -msg.linear.x;
     motorSpeedB = -msg.linear.y;
   }
@@ -32,7 +31,6 @@ void messageCb(const geometry_msgs::Twist& msg){
     // Set Motor B forward
     digitalWrite(in3, LOW);
     digitalWrite(in4, HIGH);
-    // Convert the increasing Y-axis readings for going forward from 550 to 1023 into 0 to 255 value for the PWM signal for increasing the motor speed
     motorSpeedA = msg.linear.x;
     motorSpeedB = msg.linear.y;
   }
@@ -71,5 +69,5 @@ void setup()
 void loop()
 {
   nh.spinOnce();
-  delay(10);
+  delay(1);
 }
