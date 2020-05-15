@@ -25,27 +25,27 @@ void loop()
   int yAxis = analogRead(A1);
    
   if (yAxis < 470) {
-    yAxis = -map(yAxis, 470, 0, 0, 255);
+    yAxis = -map(yAxis, 470, 0, 0, -1);
   }
   else if (yAxis > 550) {
-    yAxis = map(yAxis, 550, 1023, 0, 255);
+    yAxis = map(yAxis, 550, 1023, 0, 1);
   }
   else {
     yAxis = 0;
   }
   
   if (xAxis < 470) {
-    xAxis = -map(xAxis, 470, 0, 0, 255);
+    xAxis = -map(xAxis, 470, 0, 0, -1);
   }
   else if (xAxis > 550) {
-    xAxis = map(xAxis, 550, 1023, 0, 255);
+    xAxis = map(xAxis, 550, 1023, 0, 1);
   }
   else {
     xAxis = 0;
   }
   
-  joy_data.linear.x = 0.0;
-  joy_data.linear.y = yAxis;
+  joy_data.linear.x = yAxis;
+  joy_data.linear.y = 0.0;
   joy_data.linear.z = 0.0;  
 
   joy_data.angular.x = 0.0;

@@ -14,30 +14,30 @@ int motorSpeedB = 0;
 
 void messageCb(const geometry_msgs::Twist& msg){
 
-  if (yAxis < 0) {
+  if (msg.linear.x < 0) {
     // Set Motor A backward
     digitalWrite(in1, HIGH);
     digitalWrite(in2, LOW);
-    // Set Motor B backward
-    digitalWrite(in3, HIGH);
-    digitalWrite(in4, LOW);
     motorSpeedA = -msg.linear.x;
-    motorSpeedB = -msg.linear.y;
   }
-  else if (yAxis > 0) {
+  else if (msg.linear.x > 0) {
     // Set Motor A forward
     digitalWrite(in1, LOW);
     digitalWrite(in2, HIGH);
-    // Set Motor B forward
+    motorSpeedA = msg.linear.x;
+  }
+  
+  if (msg.linear.y < 0) {
+    // Set Motor A backward
+    digitalWrite(in3, HIGH);
+    digitalWrite(in4, LOW);
+    motorSpeedB = -msg.linear.y;
+  }
+  else if (msg.linear.y > 0) {
+    // Set Motor A forward
     digitalWrite(in3, LOW);
     digitalWrite(in4, HIGH);
-    motorSpeedA = msg.linear.x;
     motorSpeedB = msg.linear.y;
-  }
-  // If joystick stays in middle the motors are not moving
-  else {
-    motorSpeedA = 0;
-    motorSpeedB = 0;
   }
   analogWrite(enA, motorSpeedA); // Send PWM signal to motor A
   analogWrite(enB, motorSpeedB); // Send PWM signal to motor B
