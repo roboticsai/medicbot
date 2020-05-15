@@ -49,6 +49,10 @@ RRBotHWInterface::RRBotHWInterface(ros::NodeHandle &nh, urdf::Model *urdf_model)
   pub  = n.advertise<geometry_msgs::Twist>("/twist", 1000);
 }
 
+float map(float value, float low1, float high1, float low2, float high2) {
+  return low2 + (value - low1) * (high2 - low2) / (high1 - low1);
+}
+
 void RRBotHWInterface::read(ros::Duration &elapsed_time)
 {
   // ----------------------------------------------------
@@ -82,8 +86,8 @@ void RRBotHWInterface::write(ros::Duration &elapsed_time)
     joint_velocity_[joint_id] += joint_velocity_command_[joint_id];
   }
 
-  twist.linear.x = joint_velocity_command_[0]*1000; 
-  twist.linear.y = joint_velocity_command_[1]*1000;
+  twist.linear.x = map(joint_velocity_command_[0],-1,1,-255,255); 
+  twist.linear.y = map(joint_velocity_command_[1],-1,1,-255,255);
 
   pub.publish(twist);
   if(joint_velocity_command_[0] != 0 || joint_velocity_command_[1] != 0)
