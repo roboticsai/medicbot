@@ -41,8 +41,30 @@
 #define RRBOT_CONTROL__RRBOT_HW_INTERFACE_H
 
 #include <ros_control_boilerplate/generic_hw_interface.h>
-#include "geometry_msgs/Twist.h"
 
+// For Serial Communication with arduino board
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+
+#include <iostream>
+#include <iostream>
+
+#include <string.h>  /* String function definitions */
+#include <unistd.h>  /* UNIX standard function definitions */
+#include <fcntl.h>   /* File control definitions */
+#include <errno.h>   /* Error number definitions */
+#include <termios.h> /* POSIX terminal control definitions */
+#include <chrono>
+#include <thread>
+#include <sstream>
+#include <iomanip>
+
+#include <string>
 namespace rrbot_control
 {
 
@@ -65,9 +87,10 @@ public:
   /** \breif Enforce limits for all values before writing */
   virtual void enforceLimits(ros::Duration &period);
 
-  ros::NodeHandle n;
-  ros::Publisher pub;
-  geometry_msgs::Twist twist;
+  // Serial comm specific vars and methods
+  int fd,ret;
+  char red[88];
+
 };  // class
 
 }  // namespace

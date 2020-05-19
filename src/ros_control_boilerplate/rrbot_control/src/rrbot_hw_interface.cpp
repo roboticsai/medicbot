@@ -45,12 +45,23 @@ namespace rrbot_control
 RRBotHWInterface::RRBotHWInterface(ros::NodeHandle &nh, urdf::Model *urdf_model)
   : ros_control_boilerplate::GenericHWInterface(nh, urdf_model)
 {
-  ROS_INFO_NAMED("rrbot_hw_interface", "RRBotHWInterface Ready.");
-  pub  = n.advertise<geometry_msgs::Twist>("/twist", 1000);
-}
+    ROS_INFO_NAMED("rrbot_hw_interface", "RRBotHWInterface Ready.");
 
-int map(float value, float low1, float high1, float low2, float high2) {
-  return low2 + (value - low1) * (high2 - low2) / (high1 - low1);
+    fd = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY | O_NDELAY);
+    struct termios SerialPortSettings;  // Create the structure
+    tcgetattr(fd, &SerialPortSettings);
+    cfsetispeed(&SerialPortSettings,B115200); // Set Read  Speed as 115200
+    cfsetospeed(&SerialPortSettings,B115200);
+    if((tcsetattr(fd,TCSANOW,&SerialPortSettings)) != 0) // Set the attributes to the termios structure
+      printf("Error while setting attributes \n");
+      printf("\nfunction name is  %s >>\n",__func__);
+      printf("reading from Serial port== %c >>\n",red);
+      printf("returned fd is :%d\n",fd );
+      if (fd == -1)
+      {
+        perror("open_port: Unable to open /dev/ttyUSB0 - ");
+      }
+
 }
 
 void RRBotHWInterface::read(ros::Duration &elapsed_time)
@@ -64,6 +75,24 @@ void RRBotHWInterface::read(ros::Duration &elapsed_time)
   // ----------------------------------------------------
   // ----------------------------------------------------
   // ----------------------------------------------------
+}
+
+int myMap(float x, float in_min, float in_max, float out_min, float out_max) {
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+std::string to_format(const int number,int decPlace) {
+    std::stringstream ss;
+    ss << std::setw(decPlace) << std::setfill('0') << number;
+    return ss.str();
+}
+
+void Write(int fd,std::string data,std::size_t del_time) {
+  //std::cout<<"sending data serial="<<data<<std::endl;
+  for(int i=0;i<data.length();i++) {
+      int ret=write(fd,&data[i],1);
+  }
+  std::this_thread::sleep_for (std::chrono::microseconds (del_time));
 }
 
 void RRBotHWInterface::write(ros::Duration &elapsed_time)
@@ -86,10 +115,11 @@ void RRBotHWInterface::write(ros::Duration &elapsed_time)
     joint_velocity_[joint_id] += joint_velocity_command_[joint_id];
   }
 
-  twist.linear.x = map(joint_velocity_command_[0],-1,1,-255,255); 
-  twist.linear.y = map(joint_velocity_command_[1],-1,1,-255,255);
-
-  pub.publish(twist);
+  int joint1_vel = myMap(joint_velocity_command_[0],-1,1,-255,255);
+  int joint2_vel = myMap(joint_velocity_command_[1],-1,1,-255,255);
+  
+  std::string data = to_format(joint1_vel,4)+to_format(joint2_vel,4)+"\n";
+  Write(fd,data,10000);
   // END DUMMY CODE
   //
   // ----------------------------------------------------
