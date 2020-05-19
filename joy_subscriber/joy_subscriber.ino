@@ -1,4 +1,3 @@
-
 String inputString = "";         // a String to hold incoming data
 bool stringComplete = false;  // whether the string is complete
 
@@ -11,6 +10,11 @@ bool stringComplete = false;  // whether the string is complete
 
 void setup()
 {
+  // initialize serial:
+  Serial.begin(115200);
+  // reserve 200 bytes for the inputString:
+  inputString.reserve(200);
+
   //for Motor Driver inits
   pinMode(enA, OUTPUT);
   pinMode(enB, OUTPUT);
@@ -33,6 +37,8 @@ void loop()
     int joint1_vel = inputString.substring(0,4).toInt();
     int joint2_vel = inputString.substring(4,8).toInt();
 
+    Serial.print(joint1_vel); Serial.print(","); Serial.print(joint2_vel); Serial.print("---");
+  
     if (joint1_vel < 0) {
       // Set Motor A backward
       digitalWrite(in1, HIGH);
@@ -58,6 +64,9 @@ void loop()
       digitalWrite(in4, HIGH);
       joint2_vel = joint2_vel;
     }
+
+    Serial.print(joint1_vel); Serial.print(","); Serial.println(joint2_vel);
+
     analogWrite(enA, joint1_vel); // Send PWM signal to motor A
     analogWrite(enB, joint2_vel); // Send PWM signal to motor B
  
@@ -85,4 +94,3 @@ void serialEvent() {
     }
   }
 }
-

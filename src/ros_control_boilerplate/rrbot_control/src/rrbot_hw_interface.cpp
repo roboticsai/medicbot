@@ -59,7 +59,7 @@ RRBotHWInterface::RRBotHWInterface(ros::NodeHandle &nh, urdf::Model *urdf_model)
       printf("returned fd is :%d\n",fd );
       if (fd == -1)
       {
-        perror("open_port: Unable to open /dev/ttyUSB0 - ");
+        perror("open_port: Unable to open /dev/ttyACM0 - ");
       }
 
 }
@@ -77,7 +77,7 @@ void RRBotHWInterface::read(ros::Duration &elapsed_time)
   // ----------------------------------------------------
 }
 
-int myMap(float x, float in_min, float in_max, float out_min, float out_max) {
+float myMap(float x, float in_min, float in_max, float out_min, float out_max) {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
@@ -88,7 +88,6 @@ std::string to_format(const int number,int decPlace) {
 }
 
 void Write(int fd,std::string data,std::size_t del_time) {
-  //std::cout<<"sending data serial="<<data<<std::endl;
   for(int i=0;i<data.length();i++) {
       int ret=write(fd,&data[i],1);
   }
@@ -115,10 +114,23 @@ void RRBotHWInterface::write(ros::Duration &elapsed_time)
     joint_velocity_[joint_id] += joint_velocity_command_[joint_id];
   }
 
-  int joint1_vel = myMap(joint_velocity_command_[0],-1,1,-255,255);
-  int joint2_vel = myMap(joint_velocity_command_[1],-1,1,-255,255);
+  //std::cout<<joint_velocity_command_[0]<<"\t"<<joint_velocity_command_[1];
+
+  if(joint_velocity_command_[0] < -1) 
+	  joint_velocity_command_[0] = -1;
+  if(joint_velocity_command_[0] > 1)
+	  joint_velocity_command_[0] = 1;
+  if(joint_velocity_command_[1] < -1)
+          joint_velocity_command_[1] = -1;
+  if(joint_velocity_command_[1] > 1)
+	  joint_velocity_command_[1] = 1;
+  float joint1_vel = myMap(joint_velocity_command_[0],-1,1,-255,255);
+  float joint2_vel = myMap(joint_velocity_command_[1],-1,1,-255,255);
+  
+  //std::cout<<joint1_vel<<"\t"<<joint2_vel<<std::endl;
   
   std::string data = to_format(joint1_vel,4)+to_format(joint2_vel,4)+"\n";
+  std::cout<<data<<std::endl;
   Write(fd,data,10000);
   // END DUMMY CODE
   //
