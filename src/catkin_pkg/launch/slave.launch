@@ -1,0 +1,9 @@
+<launch>
+    <node pkg="rosserial_arduino" type="serial_node.py" name="subscriber" respawn="true"/>
+
+    <include file="$(find audio_capture)/launch/capture.launch">
+        <arg name="device" value="hw:1,0" />
+        <arg name="ns" value="cap1" />
+    </include>
+
+</launch>
