@@ -1,6 +1,7 @@
 <launch>
-    <node pkg="joy" type="joy_node" name="joy_node"/>
-    <node pkg="catkin_pkg" type="medicbot_teleop_joy" name="medicbot_teleop_joy"/>
+    <node pkg="rosserial_arduino" type="serial_node.py" name="publisher" respawn="true">
+        <param name="port" value="/dev/ttyACM0"/>
+    </node>
 
     <include file="$(find audio_play)/launch/play.launch">
         <arg name="do_timestamp" value="false" />
